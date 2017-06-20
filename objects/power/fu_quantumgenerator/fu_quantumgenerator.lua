@@ -1,11 +1,9 @@
 require "/objects/power/isn_sharedpowerscripts.lua"
 require "/scripts/kheAA/transferUtil.lua"
 
-local deltaTime=0
-
 function init()
 	transferUtil.init()
-	isn_powerInit()
+	isn.powerInit()
 	
     object.setInteractive(true)
     object.setSoundEffectEnabled(false)
@@ -29,8 +27,8 @@ function nodeStuff()
 	storage.active=false
 	if storage.logicInNode then
 		if (not object.isInputNodeConnected(storage.logicInNode)) or object.getInputNodeLevel(storage.logicInNode) then
-			--sb.logInfo("checkvalid: %s",isn_checkValidOutput())
-			if isn_checkValidOutput() then
+			--sb.logInfo("checkvalid: %s",isn.checkValidOutput())
+			if isn.checkValidOutput() then
 				if true then
 					storage.active=true
 				end
@@ -43,21 +41,21 @@ function nodeStuff()
 end
  
 function update(dt)
-	if deltaTime > 1 then
+	if not deltaTime or ( deltaTime > 1 ) then
 		deltaTime=0
 		nodeStuff()
 		transferUtil.loadSelfContainer()
 	else
 		deltaTime=deltaTime+dt
 	end
-	local devices = isn_getAllDevicesConnectedOnNode(storage.powerOutNode,"output")
+	local devices = isn.getAllDevicesConnectedOnNode(storage.powerOutNode,"output")
 	-- sb.logInfo("devices found: %s", devices)
 	local fullBattery = false
 	local spendingPower = false
 	for key,value in pairs(devices) do
 		-- sb.logInfo("Checking device %s", value)
-		if world.callScriptedEntity(value, "isn_isBattery") then
-			local currentBatteryStorage = world.callScriptedEntity(value, "isn_getCurrentPowerStorage")
+		if world.callScriptedEntity(value, "isn.isBattery") then
+			local currentBatteryStorage = world.callScriptedEntity(value, "isn.getCurrentPowerStorage")
 			if currentBatteryStorage > 99 then
 				fullBattery = true
 			else
@@ -67,10 +65,10 @@ function update(dt)
 					spendingPower = true
 				end
 			end
-		else
-			if not world.callScriptedEntity(value, "isn_doesNotConsumePower") then
+		--[[else
+			if not world.callScriptedEntity(value, "isn.doesNotConsumePower") then
 				spendingPower = true
-			end
+			end]]--
 		end
 	end
 	if fullBattery and not spendingPower then
@@ -106,7 +104,7 @@ function update(dt)
     if storage.fueledticks > 0 then -- if we're currently fueled up
         storage.fueledticks = storage.fueledticks - 1
         -- Increase power but cap it at a 0-100 range
-        storage.currentpowerprod = isn_numericRange((storage.currentpowerprod + storage.decayrate),0,100)
+        storage.currentpowerprod = isn.numericRange((storage.currentpowerprod + storage.decayrate),0,100)
     else -- oh no we've got no fuel
         -- if the generator isn't active don't bother trying to refuel
         if storage.active then
@@ -114,7 +112,7 @@ function update(dt)
             local contents = world.containerItems(entity.id())
             if contents[1] == nil then
                 -- if there's nothing in storage just skip straight to cutting power
-                storage.currentpowerprod = isn_numericRange((storage.currentpowerprod - storage.decayrate),0,100)
+                storage.currentpowerprod = isn.numericRange((storage.currentpowerprod - storage.decayrate),0,100)
                 return
             end
            
@@ -130,11 +128,11 @@ function update(dt)
         end
         -- since the loop ends this update if it finds fuel, if we've reached this point
         -- it means we didn't find any fuel so now we decrease power gradually
-        storage.currentpowerprod = isn_numericRange((storage.currentpowerprod - storage.decayrate),0,100)
+        storage.currentpowerprod = isn.numericRange((storage.currentpowerprod - storage.decayrate),0,100)
     end
 end
  
-function isn_getCurrentPowerOutput()
+function isn.getCurrentPowerOutput()
     if storage.batteryHold or not storage.active then return 0 end
     local powercount = 0
     if storage.currentpowerprod > 70 then powercount = 20 + storage.powerprodmod

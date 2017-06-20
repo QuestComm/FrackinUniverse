@@ -3,12 +3,12 @@ require "/objects/isn_sharedobjectscripts.lua"
 
 function init()
 	storage.active = storage.active or false
-	isn_powerInit()
+	isn.powerInit()
 end
 
-function isn_getCurrentPowerOutput()
+function isn.getCurrentPowerOutput()
 	if storage.active then
-		return isn_getCurrentPowerInput(storage.powerInNode)
+		return isn.getCurrentPowerInput(storage.powerInNode)
 	end
 	return 0
 end
@@ -17,8 +17,8 @@ function nodeStuff()
 	storage.active=false
 	if storage.logicInNode and storage.powerOutNode then
 		if (not object.isInputNodeConnected(storage.logicInNode)) or object.getInputNodeLevel(storage.logicInNode) then
-			if isn_checkValidOutput(storage.powerOutNode) then
-				if isn_getCurrentPowerInput()>0 then
+			if isn.checkValidOutput(storage.powerOutNode) then
+				if isn.getCurrentPowerInput()>0 then
 					storage.active=true
 				end
 			end

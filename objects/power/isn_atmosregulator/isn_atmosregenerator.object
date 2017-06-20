@@ -47,7 +47,7 @@
     }
   ],
 
-  "scripts" : [ "/objects/power/isn_atmosregulator/isn_atmosregenerator.lua"],
+  "scripts" : [ "/objects/power/isn_buffTower.lua"],
   "scriptDelta" : 60,
 
   "animation" : "isn_atmosregulator.animation",
@@ -58,6 +58,8 @@
   
   "animationPosition" : [-80, 0],
 
+  "isn_buffRange":500,
+  "isn_buffEffect":"isn_atmosregen",
   "inputNodes" : [ [0, 2],[-3,1] ],
   "isn_powerReciever" : true,
   "isn_requiredPower" : 24,

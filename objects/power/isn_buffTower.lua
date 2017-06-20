@@ -3,6 +3,8 @@ require "/objects/isn_sharedobjectscripts.lua"
 
 function init()
 	isn_powerInit()
+	storage.buffRange=config.getParameter("isn_buffRange",1)
+	storage.buffEffect=config.getParameter("isn_buffEffect","nude")
 end
 
 function update(dt)
@@ -14,12 +16,8 @@ function update(dt)
 			end
 		end
 	end
-	if not storage.active then
-		animator.setAnimationState("switchState", "off")
-		return
+	animator.setAnimationState("switchState", storage.active and "on" or "off")
+	if storage.active then
+		isn_effectAllInRange(storage.buffEffect,500)--"isn_atmosregen"
 	end
-	animator.setAnimationState("switchState", "on")
-	
-	isn_effectAllInRange("isn_atmosregen",500)
-	--isn_projectileAllInRange("isn_atmosregen",500)
 end
