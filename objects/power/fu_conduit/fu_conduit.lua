@@ -7,10 +7,7 @@ function init()
 end
 
 function isn.getCurrentPowerOutput()
-	if storage.active then
-		return isn.getCurrentPowerInput(storage.powerInNode)
-	end
-	return 0
+	return (not storage.active and 0) or isn.getCurrentPowerInput(storage.powerInNode)
 end
 
 function nodeStuff()

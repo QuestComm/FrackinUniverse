@@ -1,16 +1,16 @@
 require "/scripts/util.lua"
 
 isn={}
+isn.objects={}
 
-function isn.objectsInit()
+function isn.objects.init()
 	storage.position=entity.position()
-	storage.logicInNode = config.getParameter("logicInNode")
-	storage.logicOutNode = config.getParameter("logicOutNode")
-
+	storage.logic.inNode = config.getParameter("logicInNode")
+	storage.logic.outNode = config.getParameter("logicOutNode")
 end
 
 
-function isn.getAllDevicesConnectedOnNode(node,direction)
+function isn.objects.deviceList(node,direction)
 	if node == nil then return nil end
 	
 	local nodeID
@@ -27,16 +27,23 @@ function isn.getAllDevicesConnectedOnNode(node,direction)
 	return devices
 end
 
-function isn.countDevicesConnectedOnOutboundNode(node)
+function isn.objects.outputDeviceCount(node)
 	if not node then return 0 end
+	if not node >= object.outputNodeCount() return 0 end
 	return util.tableSize(object.getOutputNodeIds(node))
+end
+
+function isn.objects.inputDeviceCount(node)
+	if not node then return 0 end
+	if not node >= object.inputNodeCount() return 0 end
+	return util.tableSize(object.getInputNodeIds(node))
 end
 
 
 function isn.getXPercentageOfY(x,y)
-	if (not x) or (not y) return nil end
-	if x ~= 0 and y~= 0 then return (x / y) * 100 end
-	return 0
+	if (not x) or (not y) return 0 end
+	if x = 0 or y = 0 then return 0 end
+	return (x / y) * 100
 end
 
 
@@ -57,7 +64,7 @@ function isn.effectAllInRange(effect,tilerange)
 	isn.effectTypesInRange(effect,tilerange,{"creature"})
 end
 
---projectile group
+--projectile group - generally outdated mechanism
 --inrange
 function isn.projectileTypesInRange(projtype,tilerange,types)
 	local targetlist = world.entityQuery(entity.position(),tilerange,{includedTypes=types})
@@ -106,20 +113,3 @@ function isn.projectileAllInRectangle(projtype,entpos,xwidth,yheight)
 	isn.projectileTypesInRectangle(projtype,entpos,xwidth,yheight,{"creature"})
 end
 
-
---begin trash heap
-
---[[this function is a waste. use util.clamp instead.
-function isn.numericRange(number,minimum,maximum)
-	if number > maximum then return maximum end
-	if number < minimum then return minimum end
-	return number
-end]]
-
-
---[[wasted function. util.tableSize.
-function isn.getListLength(arg)
-	local listlength = 0
-	for _ in pairs(arg) do listlength = listlength + 1 end
-	return listlength
-end]]
